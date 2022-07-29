@@ -1,26 +1,38 @@
-networks:
-    webnet:
 services:
-    nginx:
+    nginx1:
         image: nginx:1.23.1
-        container_name: nginx
-        restart: always
+        container_name: nginx-server1
         volumes: 
-            - /Users/wells_lin/Desktop/docker-Nginx-PHP/nginx/conf.d:/etc/nginx/conf.d
-            - /Users/wells_lin/Desktop/docker-Nginx-PHP/nginx/html:/usr/share/nginx/html
+            - /Users/wells_lin/Desktop/docker-Nginx-PHP/nginx-server1/conf.d:/etc/nginx/conf.d
+            - /Users/wells_lin/Desktop/docker-Nginx-PHP/nginx-server1/html:/usr/share/nginx/html
         ports: 
             - "80:80"
-        networks:
-            - webnet    
-
-    php:
-        image: php:7.1-fpm-alpine3.9
-        container_name: php
-        restart: always
-        volumes:
-            - /Users/wells_lin/Desktop/docker-Nginx-PHP/nginx/html:/usr/share/nginx/html
-        expose:
-            - 9000 
-        networks:
-            - webnet               
             
+    nginx2:
+        image: nginx:1.23.1
+        container_name: nginx-server2
+        volumes: 
+            - /Users/wells_lin/Desktop/docker-Nginx-PHP/nginx-server2/conf.d:/etc/nginx/conf.d
+            - /Users/wells_lin/Desktop/docker-Nginx-PHP/nginx-server2/html:/usr/share/nginx/html
+        ports: 
+            - "81:80"
+         
+    php1:
+        image: php:7.1-fpm-alpine3.9
+        container_name: php-server1
+        volumes:
+            - /Users/wells_lin/Desktop/docker-Nginx-PHP/nginx-server1/html:/usr/share/nginx/html
+        expose:
+            - 9000
+    php2:
+        image: php:7.1-fpm-alpine3.9
+        container_name: php-server2
+        volumes:
+            - /Users/wells_lin/Desktop/docker-Nginx-PHP/nginx-server2/html:/usr/share/nginx/html
+        expose:
+            - 9000                       
+                          
+    
+      
+
+       
