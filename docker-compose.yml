@@ -6,7 +6,7 @@ services:
             - /Users/wells_lin/Desktop/docker-Nginx-PHP/nginx-server1/conf.d:/etc/nginx/conf.d
             - /Users/wells_lin/Desktop/docker-Nginx-PHP/nginx-server1/html:/usr/share/nginx/html
         ports: 
-            - "80:80"
+            - "81:80"
             
     nginx2:
         image: nginx:1.23.1
@@ -15,7 +15,7 @@ services:
             - /Users/wells_lin/Desktop/docker-Nginx-PHP/nginx-server2/conf.d:/etc/nginx/conf.d
             - /Users/wells_lin/Desktop/docker-Nginx-PHP/nginx-server2/html:/usr/share/nginx/html
         ports: 
-            - "81:80"
+            - "82:80"
          
     php1:
         image: php:7.1-fpm-alpine3.9
