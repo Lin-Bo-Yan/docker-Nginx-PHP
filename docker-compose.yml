@@ -5,18 +5,38 @@ services:
         volumes: 
             - /Users/wells_lin/Desktop/docker-Nginx-PHP/nginx-server1/conf.d:/etc/nginx/conf.d
             - /Users/wells_lin/Desktop/docker-Nginx-PHP/nginx-server1/html:/usr/share/nginx/html
-        ports: 
-            - "81:80"
-            
+        expose:
+            - 80
+        depends_on:
+            - php1
+            - fluentd
+        networks:
+            efk_network:
+                ipv4_address: 172.20.0.4
+        # logging:
+        #     driver: "fluentd"
+        #     options:
+        #         fluentd-address: 172.20.0.10:24224
+        #         tag: nginx-server1
     nginx2:
         image: nginx:1.23.1
         container_name: nginx-server2
         volumes: 
             - /Users/wells_lin/Desktop/docker-Nginx-PHP/nginx-server2/conf.d:/etc/nginx/conf.d
             - /Users/wells_lin/Desktop/docker-Nginx-PHP/nginx-server2/html:/usr/share/nginx/html
-        ports: 
-            - "82:80"
-         
+        expose:
+            - 80
+        depends_on:
+            - php2
+            - fluentd
+        networks:
+            efk_network:
+                ipv4_address: 172.20.0.5
+        # logging:
+        #     driver: "fluentd"
+        #     options:
+        #         fluentd-address: 127.0.0.11:24224
+        #         tag: nginx-server2
     php1:
         image: php:7.1-fpm-alpine3.9
         container_name: php-server1
@@ -24,15 +44,38 @@ services:
             - /Users/wells_lin/Desktop/docker-Nginx-PHP/nginx-server1/html:/usr/share/nginx/html
         expose:
             - 9000
+        networks:
+            efk_network:
+                ipv4_address: 172.20.0.6
     php2:
         image: php:7.1-fpm-alpine3.9
         container_name: php-server2
         volumes:
             - /Users/wells_lin/Desktop/docker-Nginx-PHP/nginx-server2/html:/usr/share/nginx/html
         expose:
-            - 9000                       
-                          
-    
-      
-
-       
+            - 9000
+        networks:
+            efk_network:
+                ipv4_address: 172.20.0.7
+    haproxy:
+        image: haproxy
+        container_name: haproxy
+        volumes:
+            - /Users/wells_lin/Desktop/docker-Nginx-PHP/haproxy:/usr/local/etc/haproxy
+        ports:
+            - 80:80
+            - 8404:8404
+        depends_on:
+            - nginx1 
+            - nginx2
+        networks:
+            efk_network:
+                ipv4_address: 172.20.0.3
+networks:
+  efk_network:
+    driver: bridge
+    name: efk_network
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1
