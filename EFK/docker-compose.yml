@@ -23,11 +23,11 @@ services:
         networks:
             efk_network:
                 ipv4_address: 172.20.0.9
-  fluentd:
-        build: /Users/wells_lin/Desktop/docker-Nginx-PHP/fluent
-        container_name: fluentd
+  fluentdforward:
+        build: /Users/wells_lin/Desktop/docker-Nginx-PHP/EFK/fluent
+        container_name: fluentdForward
         volumes:
-            - /Users/wells_lin/Desktop/docker-Nginx-PHP/EFK/fluent.conf:/fluentd/etc/fluent.conf
+            - /Users/wells_lin/Desktop/docker-Nginx-PHP/EFK/fluent/fluent.conf:/fluentd/etc/fluent.conf
         ports:
             - 24224:24224
             - 24224:24224/udp
@@ -38,5 +38,9 @@ services:
                 ipv4_address: 172.20.0.10
 networks:
   efk_network:
-    external:
-      name: efk_network
+    driver: bridge
+    name: efk_network
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1

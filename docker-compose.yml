@@ -13,11 +13,11 @@ services:
         networks:
             efk_network:
                 ipv4_address: 172.20.0.4
-        # logging:
-        #     driver: "fluentd"
-        #     options:
-        #         fluentd-address: 172.20.0.10:24224
-        #         tag: nginx-server1
+        logging:
+            driver: "fluentd"
+            options:
+                fluentd-address: localhost:24224
+                tag: nginx
     nginx2:
         image: nginx:1.23.1
         container_name: nginx-server2
@@ -32,11 +32,11 @@ services:
         networks:
             efk_network:
                 ipv4_address: 172.20.0.5
-        # logging:
-        #     driver: "fluentd"
-        #     options:
-        #         fluentd-address: 127.0.0.11:24224
-        #         tag: nginx-server2
+        logging:
+            driver: "fluentd"
+            options:
+                fluentd-address: localhost:24224
+                tag: nginx
     php1:
         image: php:7.1-fpm-alpine3.9
         container_name: php-server1
@@ -73,9 +73,5 @@ services:
                 ipv4_address: 172.20.0.3
 networks:
   efk_network:
-    driver: bridge
-    name: efk_network
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
-          gateway: 172.20.0.1
+    external:
+      name: efk_network
