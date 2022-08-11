@@ -1,46 +1,65 @@
 services:
     nginx1:
-        image: nginx:1.23.1
+        build: ./nginx-server1
         container_name: nginx-server1
         volumes: 
-            - /Users/wells_lin/Desktop/docker-Nginx-PHP/nginx-server1/conf.d:/etc/nginx/conf.d
-            - /Users/wells_lin/Desktop/docker-Nginx-PHP/nginx-server1/html:/usr/share/nginx/html
+            - ./nginx-server1/html:/usr/share/nginx/html
         expose:
             - 80
+        ports:
+            - 8080:8080
         depends_on:
             - php1
+        networks:
+            fwa_network:
     nginx2:
-        image: nginx:1.23.1
+        build: ./nginx-server2
         container_name: nginx-server2
         volumes: 
-            - /Users/wells_lin/Desktop/docker-Nginx-PHP/nginx-server2/conf.d:/etc/nginx/conf.d
-            - /Users/wells_lin/Desktop/docker-Nginx-PHP/nginx-server2/html:/usr/share/nginx/html
+            - ./nginx-server2/conf.d:/etc/nginx/conf.d
+            - ./nginx-server2/html:/usr/share/nginx/html
         expose:
             - 80
         depends_on:
             - php2
+        networks:
+            fwa_network:
     php1:
         image: php:7.1-fpm-alpine3.9
         container_name: php-server1
         volumes:
-            - /Users/wells_lin/Desktop/docker-Nginx-PHP/nginx-server1/html:/usr/share/nginx/html
+            - ./nginx-server1/html:/usr/share/nginx/html
         expose:
             - 9000
+        networks:
+            fwa_network:
     php2:
         image: php:7.1-fpm-alpine3.9
         container_name: php-server2
         volumes:
-            - /Users/wells_lin/Desktop/docker-Nginx-PHP/nginx-server2/html:/usr/share/nginx/html
+            - ./nginx-server2/html:/usr/share/nginx/html
         expose:
             - 9000
+        networks:
+            fwa_network:
     haproxy:
         image: haproxy
         container_name: haproxy
         volumes:
-            - /Users/wells_lin/Desktop/docker-Nginx-PHP/haproxy:/usr/local/etc/haproxy
+            - ./haproxy:/usr/local/etc/haproxy
         ports:
             - 80:80
             - 8404:8404
         depends_on:
             - nginx1 
             - nginx2
+        networks:
+            fwa_network:
+networks:
+  fwa_network:
+    driver: bridge
+    name: fwa_network
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1
